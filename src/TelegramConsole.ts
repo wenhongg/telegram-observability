@@ -185,6 +185,7 @@ export class TelegramConsole {
     // If the log level is below the minimum log level, do nothing
     // This applies for calls directly to the TelegramConsole instance
     if (!this.shouldLog(level)) {
+        this.originalConsole.error('Attempted to log message below minimum log level:', level, 'with message:', args);
       return;
     }
 

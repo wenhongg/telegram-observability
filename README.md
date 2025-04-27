@@ -28,16 +28,46 @@ pnpm add telegram-observability
 
 ## Quick Start
 
-### Basic Usage
+### 1. Set Up Your Telegram Bot
+
+1. Open Telegram and search for [@BotFather](https://t.me/botfather)
+2. Start a chat with BotFather and send `/newbot`
+3. Follow the instructions to:
+   - Choose a name for your bot
+   - Choose a username for your bot (must end in 'bot')
+4. BotFather will give you a token that looks like `123456789:ABCdefGHIjklMNOpqrsTUVwxyz`
+   - This is your `botToken`
+   - ⚠️ Keep this token secret and never share it publicly
+
+### 2. Get Your Chat ID
+
+There are two ways to get your chat ID:
+
+#### Method 1: Using a Bot
+1. Start a chat with your new bot
+2. Send any message to the bot
+3. Visit this URL in your browser (replace with your bot token):
+   ```
+   https://api.telegram.org/bot<YourBOTToken>/getUpdates
+   ```
+4. Look for the `"chat":{"id":` field in the response
+   - The number after `"id":` is your `chatId`
+
+#### Method 2: Using @userinfobot
+1. Search for [@userinfobot](https://t.me/userinfobot) on Telegram
+2. Start a chat and send any message
+3. The bot will reply with your chat ID
+
+### 3. Basic Usage
 
 ```typescript
 import { TelegramConsole } from 'telegram-observability';
 
 // Create a new instance
 const telegramConsole = new TelegramConsole({
-  botToken: 'YOUR_BOT_TOKEN',
-  chatId: 'YOUR_CHAT_ID',
-  overrideConsole: false, // Set to true if you want to override global console
+  botToken: 'YOUR_BOT_TOKEN', // From BotFather
+  chatId: 'YOUR_CHAT_ID',    // From getUpdates or @userinfobot
+  overrideConsole: false,     // Set to true if you want to override global console
 });
 
 // Direct usage without overriding console
