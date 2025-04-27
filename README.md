@@ -1,6 +1,17 @@
 # Telegram Observability
 
-A React and Next.js library for sending application logs and metrics to Telegram.
+A powerful logging tool that sends console logs to Telegram, perfect for monitoring your applications in real-time.
+
+## Features
+
+- 📱 Send logs directly to Telegram
+- 🔄 Ordered log processing
+- 📊 Multiple log levels (log, info, warn, error)
+- 🔍 Rich metadata support
+- 🚀 Works in both browser and Node.js environments
+- ⚡️ Non-blocking async logging
+- 🔒 Configurable minimum log level
+- 📝 Customizable message formatting
 
 ## Installation
 
@@ -17,312 +28,176 @@ pnpm add telegram-observability
 
 ## Quick Start
 
+### Basic Usage
+
 ```typescript
 import { TelegramConsole } from 'telegram-observability';
 
-// Initialize the console with default configuration
+// Create a new instance
 const telegramConsole = new TelegramConsole({
   botToken: 'YOUR_BOT_TOKEN',
   chatId: 'YOUR_CHAT_ID',
-  // All other settings use defaults:
-  // - minLogLevel: 'error' (only errors are logged)
-  // - maxLogLength: 2048 (logs longer than this will be truncated)
+  overrideConsole: false, // Set to true if you want to override global console
 });
 
-// Logs are processed in order, even when called in quick succession
-console.log('First log');
-console.info('Second log');
-console.warn('Third log');
-console.error('Fourth log');
+// Direct usage without overriding console
+telegramConsole.log('Hello, world!');
+telegramConsole.info('User logged in');
+telegramConsole.warn('High memory usage detected');
+telegramConsole.error('Failed to connect to database');
 
-// All logs will be sent to Telegram in the correct order:
-// 1. First log
-// 2. Second log
-// 3. Third log
-// 4. Fourth log
-
-// Change minimum log level at runtime
-telegramConsole.setMinLogLevel('info'); // Now logs info, warn, and error
-console.info('This will be sent to Telegram', { 
+// With metadata
+telegramConsole.log('User action', {
   userId: '123',
-  action: 'login'
+  action: 'login',
+  timestamp: new Date().toISOString()
 });
-
-// Change maximum log length at runtime
-telegramConsole.setMaxLogLength(4096); // Increase max length to 4096 characters
-
-// Restore original console methods
-telegramConsole.restoreConsole();
 ```
 
-## Default Configuration
+### Overriding Global Console
 
-The library comes with sensible defaults that can be overridden:
-
-```typescript
-// Default configuration values
-{
-  minLogLevel: 'error',    // Only log errors by default
-  maxLogLength: 2048,      // Truncate logs longer than 2048 characters
-}
-```
-
-You can override these defaults when creating a new instance:
+If you want to override the global console methods:
 
 ```typescript
 const telegramConsole = new TelegramConsole({
   botToken: 'YOUR_BOT_TOKEN',
   chatId: 'YOUR_CHAT_ID',
-  minLogLevel: 'info',     // Override default to log more levels
-  maxLogLength: 4096,      // Override default to allow longer logs
+  overrideConsole: true, // This will override global console methods
 });
+
+// Now all console calls will be sent to Telegram
+console.log('This will be sent to Telegram');
+console.info('So will this');
+console.warn('And this');
+console.error('And this too');
 ```
 
 ## Log Levels
 
-The library supports the following log levels, ordered by severity:
+The library supports the following log levels:
+- `log`: General logging
+- `info`: Informational messages
+- `warn`: Warning messages
+- `error`: Error messages
 
-1. `log` - General logging information
-2. `info` - Informational messages
-3. `warn` - Warning messages
-4. `error` - Error messages (default minimum level)
+By default, only `error` level logs are sent. You can change this using the `minLogLevel` configuration:
 
-Note: `console.debug` is not supported as it's typically used for development debugging and not meant for production logging.
-
-When you set a minimum log level, only messages at that level or higher will be sent to Telegram. For example:
-- If `minLogLevel` is not specified, only `error` messages will be sent (default)
-- If `minLogLevel` is set to `'info'`, only `info`, `warn`, and `error` messages will be sent
-- If `minLogLevel` is set to `'warn'`, only `warn` and `error` messages will be sent
-- If `minLogLevel` is set to `'error'`, only `error` messages will be sent
+```typescript
+const telegramConsole = new TelegramConsole({
+  botToken: 'YOUR_BOT_TOKEN',
+  chatId: 'YOUR_CHAT_ID',
+  minLogLevel: 'info', // Will send info, warn, and error logs
+});
+```
 
 ## Log Processing
 
-The library ensures that logs are processed in the correct order, even when multiple console methods are called in quick succession. This is achieved through an internal queue system that:
-
-1. Collects logs in the order they are called
-2. Processes them sequentially
-3. Maintains order even when network latency varies
-
-For example:
-```typescript
-console.log('First');
-console.info('Second');
-console.warn('Third');
-console.error('Fourth');
-
-// All logs will be sent to Telegram in this exact order
-```
-
-This behavior is particularly important for:
-- Debugging sequences of events
-- Maintaining chronological order of operations
-- Ensuring error context is preserved
-- Tracking user flows and application state
-
-## Log Length
-
-The library automatically truncates logs that exceed the maximum length (default: 2048 characters). This helps ensure compatibility with Telegram's message length limits and prevents overly large log messages.
+The library uses an internal queue system to ensure logs are processed in the order they are created, even when called in quick succession:
 
 ```typescript
-// Long log message will be truncated
-console.log('A very long message...' + '...'.repeat(1000));
-
-// You can increase the maximum length if needed
-telegramConsole.setMaxLogLength(4096);
+// These logs will be processed in order, regardless of network latency
+telegramConsole.log('First message');
+telegramConsole.info('Second message');
+telegramConsole.warn('Third message');
+telegramConsole.error('Fourth message');
 ```
 
 ## Log Metadata
 
-The library automatically extracts metadata from your log messages. Any object passed as an argument to console methods will be included in the metadata:
+You can attach metadata to your logs for better context:
 
 ```typescript
-// Simple metadata
-console.log('User action', { userId: '123', action: 'login' });
-
-// Error with stack trace
-console.error('API error', new Error('Failed to fetch data'));
-
-// Complex metadata
-console.info('Payment processed', {
-  amount: 100,
-  currency: 'USD',
-  paymentMethod: 'credit_card',
-  metadata: {
-    cardLast4: '1234',
-    transactionId: 'tx_123'
+telegramConsole.log('User action', {
+  userId: '123',
+  action: 'login',
+  details: {
+    browser: 'Chrome',
+    version: '120.0.0'
   }
 });
 ```
 
-Metadata is automatically extracted and structured as follows:
-- For regular objects: All properties are included in metadata
-- For Error objects: `error` and `stack` properties are automatically included
-- For mixed arguments: String arguments form the message, objects become metadata
+The metadata will be formatted and included in the Telegram message.
 
-## Usage
+## Configuration Options
 
-### 1. Set up environment variables
-
-Create a `.env.local` file in your Next.js project root:
-
-```env
-# For client-side usage (with NEXT_PUBLIC_ prefix)
-NEXT_PUBLIC_TELEGRAM_BOT_TOKEN=your_bot_token
-NEXT_PUBLIC_TELEGRAM_CHAT_ID=your_chat_id
-
-# For server-side usage
-TELEGRAM_BOT_TOKEN=your_bot_token
-TELEGRAM_CHAT_ID=your_chat_id
-```
-
-### 2. Client-side usage
-
-```tsx
-// components/LogButton.tsx
-'use client';
-
-import { TelegramConsole } from 'telegram-observability';
-import { useEffect } from 'react';
-
-export function LogButton() {
-  useEffect(() => {
-    const telegramConsole = new TelegramConsole({
-      botToken: process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN!,
-      chatId: process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID!,
-      // Using default configuration
-    });
-
-    // Logs will be processed in order
-    console.log('Component mounted', { 
-      mountTime: performance.now()
-    });
-    console.info('Component initialized', { 
-      component: 'LogButton',
-      timestamp: new Date()
-    });
-    console.warn('Component warning', { 
-      severity: 'medium',
-      context: 'user interaction'
-    });
-    console.error('Component error', { 
-      component: 'LogButton',
-      error: 'Failed to initialize'
-    });
-
-    // Cleanup: restore original console methods
-    return () => telegramConsole.restoreConsole();
-  }, []);
-
-  return <button>Log Something</button>;
+```typescript
+interface TelegramConsoleConfig {
+  botToken: string;
+  chatId: string;
+  overrideConsole?: boolean;
+  minLogLevel?: LogLevel;
+  maxLogLength?: number;
+  enabled?: boolean;
 }
 ```
 
-### 3. Server-side usage
+- `botToken`: Your Telegram bot token (required)
+- `chatId`: The chat ID to send logs to (required)
+- `overrideConsole`: Whether to override global console methods (default: false)
+- `minLogLevel`: Minimum log level to send (default: 'error')
+- `maxLogLength`: Maximum length of log messages (default: 4096)
+- `enabled`: Whether logging is enabled (default: true)
+
+## Usage in Different Environments
+
+### Browser
 
 ```typescript
-// pages/api/some-api-route.ts
 import { TelegramConsole } from 'telegram-observability';
 
 const telegramConsole = new TelegramConsole({
-  botToken: process.env.TELEGRAM_BOT_TOKEN!,
-  chatId: process.env.TELEGRAM_CHAT_ID!,
-  minLogLevel: 'warn', // Override default to log warnings and errors
-  maxLogLength: 4096,  // Override default to allow longer logs
+  botToken: 'YOUR_BOT_TOKEN',
+  chatId: 'YOUR_CHAT_ID',
 });
 
-export default async function handler(req, res) {
-  try {
-    // Logs will be processed in order
-    console.log('Request received', { 
-      requestId: req.headers['x-request-id']
-    });
-    console.info('API request details', {
-      endpoint: '/api/some-api-route',
-      method: req.method,
-      headers: req.headers
-    });
+// Use directly
+telegramConsole.log('Browser log');
 
-    // Your API logic here
-    res.status(200).json({ success: true });
-  } catch (error) {
-    // Error logs will be processed in order
-    console.warn('API warning', { 
-      endpoint: '/api/some-api-route',
-      method: req.method,
-      warning: 'Rate limit approaching'
-    });
-    console.error('API error occurred', error, {
-      endpoint: '/api/some-api-route',
-      method: req.method,
-      userId: req.headers['x-user-id']
-    });
+// Or override console
+const telegramConsole = new TelegramConsole({
+  botToken: 'YOUR_BOT_TOKEN',
+  chatId: 'YOUR_CHAT_ID',
+  overrideConsole: true,
+});
 
-    res.status(500).json({ error: 'Internal server error' });
-  }
-}
+console.log('This will be sent to Telegram');
 ```
 
-### 4. Server Components (Next.js 13+)
+### Node.js
 
-```tsx
-// app/components/ServerComponent.tsx
+```typescript
 import { TelegramConsole } from 'telegram-observability';
 
-export default async function ServerComponent() {
-  const telegramConsole = new TelegramConsole({
-    botToken: process.env.TELEGRAM_BOT_TOKEN!,
-    chatId: process.env.TELEGRAM_CHAT_ID!,
-    minLogLevel: 'info', // Override default to log info, warn, and error
-    maxLogLength: 4096,  // Override default to allow longer logs
-  });
+const telegramConsole = new TelegramConsole({
+  botToken: 'YOUR_BOT_TOKEN',
+  chatId: 'YOUR_CHAT_ID',
+});
 
-  // Logs will be processed in order
-  console.log('Component rendering', { 
-    component: 'ServerComponent',
-    renderTime: new Date()
-  });
-  console.info('Server component details', {
-    props: { /* component props */ },
-    environment: process.env.NODE_ENV
-  });
+// Use directly
+telegramConsole.log('Server log');
 
-  return <div>Server Component</div>;
-}
+// Or override console
+const telegramConsole = new TelegramConsole({
+  botToken: 'YOUR_BOT_TOKEN',
+  chatId: 'YOUR_CHAT_ID',
+  overrideConsole: true,
+});
+
+console.log('This will be sent to Telegram');
 ```
 
-## Features
+## Error Handling
 
-- Automatically intercepts and forwards console methods to Telegram
-- Configurable minimum log level (defaults to 'error')
-- Configurable maximum log length (defaults to 2048 characters)
-- Preserves original console functionality
-- Support for all console methods (log, info, warn, error)
-- Properly formats objects and arrays
-- Automatic metadata extraction from log arguments
-- Special handling for Error objects (includes stack traces)
-- Ordered log processing (maintains chronological order)
-- Change minimum log level at runtime
-- Change maximum log length at runtime
-- Restore original console methods when needed
-- Support for both client-side and server-side logging
-- TypeScript support
+The library handles errors gracefully:
+- Failed log sends are caught and logged to console.error
+- The queue continues processing even if individual logs fail
+- Network errors don't block the application
 
-## Development
+## Contributing
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
-3. Start development mode:
-   ```bash
-   pnpm dev
-   ```
-4. Build the package:
-   ```bash
-   pnpm build
-   ```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-ISC 
+MIT 
