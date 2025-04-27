@@ -1,0 +1,31 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+
+# Types:
+#   feat:     A new feature
+#   fix:      A bug fix
+#   docs:     Documentation only changes
+#   style:    Changes that do not affect the meaning of the code
+#   refactor: A code change that neither fixes a bug nor adds a feature
+#   perf:     A code change that improves performance
+#   test:     Adding missing tests or correcting existing tests
+#   chore:    Changes to the build process or auxiliary tools
+#
+# Scopes:
+#   core:     Core functionality
+#   config:   Configuration changes
+#   test:     Testing related changes
+#   docs:     Documentation related changes
+#   deps:     Dependency updates
+#
+# Example:
+#   feat(core): add new logging functionality
+#
+#   - Implement new Telegram logging system
+#   - Add support for different log levels
+#   - Add metadata support
+#
+#   Closes #123 
