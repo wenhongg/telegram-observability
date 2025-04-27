@@ -1,6 +1,6 @@
 # Development Guide
 
-This document provides an overview of the project structure and development workflow for the Telegram Observability library.
+This document provides an overview of the project structure and development workflow for the Telegram Observability library, an open source project built by and for the community.
 
 ## Project Structure
 
@@ -145,11 +145,92 @@ Tests are organized to cover:
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and ensure they pass
-5. Submit a pull request
+We're thrilled that you're interested in contributing to Telegram Observability! This project is maintained by the community, and we value every contribution, no matter how small.
+
+### Ways to Contribute
+
+1. **Code Contributions**
+   - Fix bugs
+   - Implement new features
+   - Improve performance
+   - Add tests
+   - Refactor code
+
+2. **Documentation**
+   - Improve existing documentation
+   - Add code examples
+   - Write tutorials
+   - Translate documentation
+
+3. **Community Support**
+   - Answer questions
+   - Help triage issues
+   - Review pull requests
+   - Share your use cases
+
+### Getting Started
+
+1. **Set Up Your Environment**
+   ```bash
+   # Fork and clone the repository
+   git clone https://github.com/wenhongg/telegram-observability.git
+   cd telegram-observability
+
+   # Install dependencies
+   pnpm install
+   ```
+
+2. **Find Something to Work On**
+   - Check the [issues](https://github.com/wenhongg/telegram-observability/issues) for good first issues
+   - Look for bugs or features you'd like to implement
+   - Consider improving documentation or tests
+
+3. **Make Your Changes**
+   - Create a new branch for your work
+   - Follow the coding standards
+   - Write tests for new features
+   - Update documentation as needed
+
+4. **Submit Your Changes**
+   - Push your changes to your fork
+   - Create a pull request
+   - Follow the pull request template
+   - Be responsive to feedback
+
+### Development Guidelines
+
+1. **Code Style**
+   - Follow TypeScript best practices
+   - Use meaningful variable and function names
+   - Add comments for complex logic
+   - Keep functions small and focused
+
+2. **Testing**
+   - Write tests for new features
+   - Ensure all tests pass
+   - Maintain good test coverage
+   - Add tests for bug fixes
+
+3. **Documentation**
+   - Update README.md for significant changes
+   - Add JSDoc comments for new functions
+   - Keep examples up to date
+   - Document breaking changes
+
+4. **Pull Requests**
+   - Keep PRs focused and small
+   - Include tests and documentation
+   - Follow the commit message format
+   - Be responsive to review comments
+
+### Need Help?
+
+- Join our [community chat](https://t.me/your-community-link)
+- Open an issue for questions
+- Ask for help in pull requests
+- Reach out to maintainers
+
+Remember: Every contribution, no matter how small, helps make this project better for everyone!
 
 ## Git Workflow
 

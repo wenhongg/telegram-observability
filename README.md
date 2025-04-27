@@ -1,6 +1,6 @@
 # Telegram Observability
 
-A powerful logging tool that sends console logs to Telegram, perfect for monitoring your applications in real-time.
+A powerful open source logging tool that sends console logs to Telegram, perfect for monitoring your applications in real-time.
 
 ## Features
 
@@ -226,8 +226,28 @@ The library handles errors gracefully:
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We ❤️ open source! Telegram Observability is a community-driven project, and we welcome contributions of all kinds. Whether you're a seasoned developer or just getting started, there are many ways to help:
+
+- 🐛 Report bugs and issues
+- 💡 Suggest new features
+- 📝 Improve documentation
+- 🔧 Fix bugs and implement features
+- 🧪 Write tests
+- 📢 Share your use cases and success stories
+
+### Getting Started with Contributing
+
+1. Fork the repository
+2. Create a new branch for your feature/fix
+3. Make your changes
+4. Submit a pull request
+
+We're here to help! If you have any questions or need guidance, feel free to open an issue or reach out to the maintainers.
+
+### Development Setup
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed instructions on setting up your development environment.
 
 ## License
 
-MIT 
+MIT - Feel free to use, modify, and distribute this software as you see fit. We only ask that you give credit where credit is due and contribute back to the community when possible. 
